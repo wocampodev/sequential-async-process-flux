@@ -12,7 +12,7 @@ docker compose up -d
 # Ingresar al contenedor de MariaDB y crear la data (Solo la primera vez)
 docker exec -it mariadb_sandbox bash
 cd docker-entrypoint-initdb.d
-myslq -u admin -p
+mysql -u admin -p
 source init-database.sql
 exit # Para salir de la shell de mysql
 exit # Para salir de la shell del contenedor
