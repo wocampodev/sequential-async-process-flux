@@ -1,0 +1,31 @@
+version: '3.4'
+services:
+  mariadb_sandbox:
+    image: mariadb
+    container_name: mariadb_sandbox
+    restart: always
+    volumes:
+      - "mariadb_data:/var/lib/mysql"
+      - "./config/init-database.sql:/docker-entrypoint-initdb.d/init-database.sql"
+      - "./config/data.csv:/docker-entrypoint-initdb.d/data.csv"
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: admin
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: wordly
+  sequential-async-process-flux:
+    image: sandbox/sequential-async-process-flux
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: 'sandbox'
+      MARIADB_URL: 'r2dbc:mariadb://mariadb_sandbox:3306/wordly'
+      MARIADB_USER: 'admin'
+      MARIADB_PASSWORD: 'admin'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - mariadb_sandbox
+volumes:
+  mariadb_data:
